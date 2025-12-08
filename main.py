@@ -1,42 +1,36 @@
-from orderbook import OrderBook
+from orderbook import Orderbook
 from task import Task
 
 
-class OrderBookApp:
+class OrderbookApplication:
     def __init__(self) -> None:
         self.__running: bool = False
-        self.__orderbook: OrderBook = OrderBook()
+        self.__orderbook: Orderbook = Orderbook()
 
     def add_order(self, inputs: tuple[str, str, int]) -> None:
         self.__orderbook.add_order(*inputs)
 
-        print("added!")
+        print("task added!")
 
-    def list_finished_tasks(self) -> None:
-        finished_tasks = self.__orderbook.finished_orders()
-
-        if not finished_tasks:
+    def print_finished_tasks(self) -> None:
+        if not self.__orderbook.finished_orders:
             print("no finished tasks")
 
-        self.__print_orders(finished_tasks)
+        self.__print_orders(self.__orderbook.finished_orders)
 
-    def list_unfinished_tasks(self) -> None:
-        unfinished_tasks = self.__orderbook.unfinished_orders()
-
-        if not unfinished_tasks:
+    def print_unfinished_tasks(self) -> None:
+        if not self.__orderbook.unfinished_orders:
             print("no unfinished tasks")
 
-        self.__print_orders(unfinished_tasks)
+        self.__print_orders(self.__orderbook.unfinished_orders)
 
-    def mark_finished(self, inputs: tuple[int]) -> None:
-        self.__orderbook.mark_finished(*inputs)
+    def mark_order_finished(self, inputs: tuple[int]) -> None:
+        self.__orderbook.mark_order_finished(*inputs)
 
         print("marked as finished")
 
-    def list_programmers(self) -> None:
-        programmers = self.__orderbook.list_programmers()
-
-        for programmer in programmers:
+    def print_programmers(self) -> None:
+        for programmer in self.__orderbook.programmers:
             print(programmer)
 
     def status_of_programmer(self, inputs: tuple[str]):
@@ -48,14 +42,11 @@ class OrderBookApp:
         ) = self.__orderbook.status_of_programmer(*inputs)
 
         print(
-            f"tasks: finished {finished_tasks_count} not finished {unfinished_tasks_count}, "
-            f"hours: done {sum_of_finished_workloads} scheduled {sum_of_unfinished_workloads}"
+            f"tasks: finished {finished_tasks_count} - unfinished {unfinished_tasks_count}, "
+            f"hours: done {sum_of_finished_workloads} - scheduled {sum_of_unfinished_workloads}"
         )
 
-    def exit(self) -> None:
-        self.__running = False
-
-    def execute(self) -> None:
+    def run(self) -> None:
         self.__running = True
 
         self.__help()
@@ -66,23 +57,23 @@ class OrderBookApp:
             command = input("command: ")
 
             if command == "0":
-                self.exit()
+                self.__exit()
             elif command == "1":
                 try:
                     self.add_order(self.__add_order_inputs())
                 except ValueError:
                     print("erroneous input")
             elif command == "2":
-                self.list_finished_tasks()
+                self.print_finished_tasks()
             elif command == "3":
-                self.list_unfinished_tasks()
+                self.print_unfinished_tasks()
             elif command == "4":
                 try:
-                    self.mark_finished(self.__mark_finished_inputs())
+                    self.mark_order_finished(self.__mark_finished_inputs())
                 except ValueError:
                     print("erroneous input")
             elif command == "5":
-                self.list_programmers()
+                self.print_programmers()
             elif command == "6":
                 try:
                     self.status_of_programmer(self.__status_of_programmer_inputs())
@@ -90,6 +81,23 @@ class OrderBookApp:
                     print("erroneous input")
             else:
                 self.__help()
+
+    def __exit(self) -> None:
+        self.__running = False
+
+    def __help(self) -> None:
+        print("commands:")
+        print("0 exit")
+        print("1 add order")
+        print("2 list finished tasks")
+        print("3 list unfinished tasks")
+        print("4 mark task as finished")
+        print("5 programmers")
+        print("6 status of programmer")
+
+    def __print_orders(self, orders: list[Task]) -> None:
+        for task in orders:
+            print(task)
 
     def __add_order_inputs(self) -> tuple[str, str, int]:
         description = input("description: ")
@@ -107,25 +115,11 @@ class OrderBookApp:
 
         return (programmer,)
 
-    def __help(self) -> None:
-        print("commands:")
-        print("0 exit")
-        print("1 add order")
-        print("2 list finished tasks")
-        print("3 list unfinished tasks")
-        print("4 mark task as finished")
-        print("5 programmers")
-        print("6 status of programmer")
-
-    def __print_orders(self, orders: list[Task]) -> None:
-        for task in orders:
-            print(task)
-
 
 def main():
-    orderbook_app = OrderBookApp()
+    orderbook_app = OrderbookApplication()
 
-    orderbook_app.execute()
+    orderbook_app.run()
 
 
 if __name__ == "__main__":

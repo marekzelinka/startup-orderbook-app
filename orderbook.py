@@ -1,22 +1,25 @@
 from task import Task
 
 
-class OrderBook:
+class Orderbook:
     def __init__(self) -> None:
         self.__tasks: dict[int, Task] = {}
 
     def add_order(self, description: str, programmer: str, workload: int) -> None:
-        task = Task(description, programmer, workload)
+        new_id = len(self.__tasks) + 1
+        task = Task(new_id, description, programmer, workload)
 
         self.__tasks[task.id] = task
 
-    def all_orders(self) -> list[Task]:
+    @property
+    def orders(self) -> list[Task]:
         return list(self.__tasks.values())
 
-    def list_programmers(self) -> list[str]:
+    @property
+    def programmers(self) -> list[str]:
         return list(set(task.programmer for task in self.__tasks.values()))
 
-    def mark_finished(self, order_id: int) -> None:
+    def mark_order_finished(self, order_id: int) -> None:
         task = self.__tasks.get(order_id)
 
         if not task:
@@ -24,9 +27,11 @@ class OrderBook:
 
         task.mark_finished()
 
+    @property
     def finished_orders(self) -> list[Task]:
         return [task for task in self.__tasks.values() if task.finished]
 
+    @property
     def unfinished_orders(self) -> list[Task]:
         return [task for task in self.__tasks.values() if not task.finished]
 
