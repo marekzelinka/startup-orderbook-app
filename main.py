@@ -1,3 +1,5 @@
+from pyinputplus import inputInt, inputStr
+
 from orderbook import Orderbook
 from task import Task
 
@@ -7,8 +9,12 @@ class OrderbookApplication:
         self.__running: bool = False
         self.__orderbook: Orderbook = Orderbook()
 
-    def add_order(self, inputs: tuple[str, str, int]) -> None:
-        self.__orderbook.add_order(*inputs)
+    def add_order(self) -> None:
+        description: str = inputStr("description: ")
+        programmer: str = inputStr("programmer: ")
+        workload: int = inputInt("workload estimate: ", greaterThan=0)
+
+        self.__orderbook.add_order(description, programmer, workload)
 
         print("task added!")
 
@@ -24,8 +30,10 @@ class OrderbookApplication:
 
         self.__print_orders(self.__orderbook.unfinished_orders)
 
-    def mark_order_finished(self, inputs: tuple[int]) -> None:
-        self.__orderbook.mark_order_finished(*inputs)
+    def mark_order_finished(self) -> None:
+        order_id: int = inputInt("id: ", greaterThan=0)
+
+        self.__orderbook.mark_order_finished(order_id)
 
         print("marked as finished")
 
@@ -33,13 +41,15 @@ class OrderbookApplication:
         for programmer in self.__orderbook.programmers:
             print(programmer)
 
-    def status_of_programmer(self, inputs: tuple[str]):
+    def status_of_programmer(self):
+        programmer: str = inputStr("programmer: ")
+
         (
             finished_tasks_count,
             unfinished_tasks_count,
             sum_of_finished_workloads,
             sum_of_unfinished_workloads,
-        ) = self.__orderbook.status_of_programmer(*inputs)
+        ) = self.__orderbook.status_of_programmer(programmer)
 
         print(
             f"tasks: finished {finished_tasks_count} - unfinished {unfinished_tasks_count}, "
@@ -59,26 +69,17 @@ class OrderbookApplication:
             if command == "0":
                 self.__exit()
             elif command == "1":
-                try:
-                    self.add_order(self.__add_order_inputs())
-                except ValueError:
-                    print("erroneous input")
+                self.add_order()
             elif command == "2":
                 self.print_finished_tasks()
             elif command == "3":
                 self.print_unfinished_tasks()
             elif command == "4":
-                try:
-                    self.mark_order_finished(self.__mark_finished_inputs())
-                except ValueError:
-                    print("erroneous input")
+                self.mark_order_finished()
             elif command == "5":
                 self.print_programmers()
             elif command == "6":
-                try:
-                    self.status_of_programmer(self.__status_of_programmer_inputs())
-                except ValueError:
-                    print("erroneous input")
+                self.status_of_programmer()
             else:
                 self.__help()
 
@@ -98,22 +99,6 @@ class OrderbookApplication:
     def __print_orders(self, orders: list[Task]) -> None:
         for task in orders:
             print(task)
-
-    def __add_order_inputs(self) -> tuple[str, str, int]:
-        description = input("description: ")
-        programmer, workload = input("programmer and workload estimate: ").split(" ")
-
-        return description, programmer, int(workload)
-
-    def __mark_finished_inputs(self) -> tuple[int]:
-        id = input("id: ")
-
-        return (int(id),)
-
-    def __status_of_programmer_inputs(self) -> tuple[str]:
-        programmer = input("programmer: ")
-
-        return (programmer,)
 
 
 def main():
