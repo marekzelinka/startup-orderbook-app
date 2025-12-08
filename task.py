@@ -5,12 +5,13 @@ class Task:
         description: str,
         programmer: str,
         workload: int,
+        finished: bool = False,
     ) -> None:
         self.__id: int = id
         self.__description: str = description
         self.__workload: int = workload
         self.__programmer: str = programmer
-        self.__finished: bool = False
+        self.__finished: bool = finished
 
     def __str__(self) -> str:
         workload = f"{self.__workload} hours"

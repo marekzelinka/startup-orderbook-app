@@ -6,8 +6,8 @@ class Orderbook:
         self.__tasks: dict[int, Task] = {}
 
     @property
-    def orders(self) -> list[Task]:
-        return list(self.__tasks.values())
+    def orders(self) -> dict[int, Task]:
+        return self.__tasks
 
     @property
     def programmers(self) -> list[str]:
@@ -21,11 +21,17 @@ class Orderbook:
     def unfinished_orders(self) -> list[Task]:
         return [task for task in self.__tasks.values() if not task.finished]
 
-    def add_order(self, description: str, programmer: str, workload: int) -> None:
-        new_id = len(self.__tasks) + 1
-        task = Task(new_id, description, programmer, workload)
+    def add_order(
+        self,
+        id: int,
+        description: str,
+        programmer: str,
+        workload: int,
+        finished: bool = False,
+    ) -> None:
+        task = Task(id, description, programmer, workload, finished)
 
-        self.__tasks[task.id] = task
+        self.__tasks[id] = task
 
     def mark_order_finished(self, order_id: int) -> None:
         task = self.__tasks.get(order_id)
