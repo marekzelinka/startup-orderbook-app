@@ -1,7 +1,7 @@
 from pyinputplus import inputInt, inputMenu, inputStr
 
 from orderbook import Orderbook
-from orderbook_storage import OrderbookCSVStorage, OrderbookStorageService
+from orderbook_storage import OrderbookCSVStorageService, OrderbookStorageService
 from task import Task
 
 
@@ -107,7 +107,7 @@ class OrderbookApplication:
 
 
 def main():
-    csv_storage_service = OrderbookCSVStorage("orders.csv")
+    csv_storage_service = OrderbookCSVStorageService("orders.csv")
     orderbook_app = OrderbookApplication(storage_service=csv_storage_service)
 
     orderbook_app.run()

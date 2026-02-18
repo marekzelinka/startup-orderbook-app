@@ -12,7 +12,7 @@ class OrderbookStorageService(Protocol):
     def save_file(self, orderbook: dict[int, Task]) -> None: ...
 
 
-class OrderbookCSVStorage(OrderbookStorageService):
+class OrderbookCSVStorageService:
     def __init__(self, filename: str) -> None:
         self.__filename: str = filename
 
